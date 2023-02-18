@@ -18,12 +18,8 @@ app.post('/', async (req, res) => {
     const chatId = message?.chat?.id
     console.log(chatId, messageText)
 
-    /*if (!messageText || !chatId) {
-        return res.sendStatus(400)
-    }*/
-    const result = await googleSearch(req.body?.q)
-    //res.json({items: result?.items || []})
-    res.send( result.data?.items[0]?.volumeInfo.imageLinks.thumbnail || 'Not Found')
+    const result = await googleSearch(messageText)
+    res.send( result ? result.items[0]?.volumeInfo.imageLinks.thumbnail : 'Ничего не найдено')
 })
 
 try {
