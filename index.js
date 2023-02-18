@@ -1,6 +1,6 @@
 const express = require('express')
 
-const {googleSearch, booksListSearch}  = require('./requests.js')
+const {googleSearch, reply}  = require('./requests.js')
 const {port} = require('./config.js')
 
 const app = express()
@@ -16,10 +16,11 @@ app.post('/', async (req, res) => {
     const { message } = req.body
     const messageText = message?.text?.toLowerCase()?.trim()
     const chatId = message?.chat?.id
-    console.log(chatId, messageText)
 
     const result = await googleSearch(messageText)
-    res.send( result ? result.items[0]?.volumeInfo.imageLinks.thumbnail : 'Ничего не найдено')
+    const text = result ? result.items[0]?.volumeInfo.imageLinks.thumbnail : 'Ничего не найдено'
+    await reply(text, chatId)
+    res.end()
 })
 
 try {

@@ -1,7 +1,7 @@
 const axios = require('axios');
 const {google} = require('googleapis');
 
-const {spreadsheetId} = require('./config.js')
+const {telegramToken, spreadsheetId} = require('./config.js')
 
 const sheets = google.sheets('v4');
 
@@ -38,4 +38,10 @@ const booksListSearch = async () => {
     }
 }
 
-module.exports = { googleSearch, booksListSearch }
+const reply = async( text, chatId, reply_to_message_id) => {
+    await axios.post(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {chat_id: chatId, text})
+        .then(response => console.log(response.status))
+        .catch(e => console.log(e))
+}
+
+module.exports = { googleSearch, booksListSearch, reply }

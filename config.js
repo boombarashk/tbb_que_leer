@@ -3,5 +3,6 @@ dotenv.config()
 
 module.exports = {
     port: process.env.PORT || 3000,
-    spreadsheetId: process.env['GOOGLE_DOC_ID']
+    spreadsheetId: process.env['GOOGLE_DOC_ID'],
+    telegramToken: process.env['TELEGRAM_TOKEN'],
 }
