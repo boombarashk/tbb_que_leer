@@ -23,7 +23,7 @@ app.post('/new-message', async (req, res) => {
     }
     const result = await googleSearch(req.body?.q)
     //res.json({items: result?.items || []})
-    res.json({thumbnail: result.data?.items[0]?.volumeInfo.imageLinks.thumbnail || null})
+    res.send( result.data?.items[0]?.volumeInfo.imageLinks.thumbnail || 'Not Found')
 })
 
 try {
