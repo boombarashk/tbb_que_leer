@@ -1,8 +1,8 @@
 const express = require('express')
-//const bodyParser = require('body-parser')
+
 const {googleSearch, booksListSearch}  = require('./requests.js')
 const {port} = require('./config.js')
-const axios = require('axios');
+
 const app = express()
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
@@ -14,7 +14,8 @@ app.get('/', async (req, res) => {
 
 app.post('/', async (req, res) => {
     const result = await googleSearch(req.body?.q)
-    res.json({items: result?.items || []})
+    //res.json({items: result?.items || []})
+    res.json({thumbnail: response.data?.items[0]?.volumeInfo.imageLinks.thumbnail || null})
 })
 
 try {
