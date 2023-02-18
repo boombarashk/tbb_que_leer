@@ -12,10 +12,17 @@ app.get('/', async (req, res) => {
     res.send(result || 'Ничего не найдено')
 })
 
-app.post('/', async (req, res) => {
+app.post('/new-message', async (req, res) => {
+    const { message } = req.body
+    const messageText = message?.text?.toLowerCase()?.trim()
+    const chatId = message?.chat?.id
+
+    if (!messageText || !chatId) {
+        return res.sendStatus(400)
+    }
     const result = await googleSearch(req.body?.q)
     //res.json({items: result?.items || []})
-    res.json({thumbnail: response.data?.items[0]?.volumeInfo.imageLinks.thumbnail || null})
+    res.json({thumbnail: result.data?.items[0]?.volumeInfo.imageLinks.thumbnail || null})
 })
 
 try {
