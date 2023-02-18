@@ -12,7 +12,7 @@ app.get('/', async (req, res) => {
     res.send(result || 'Ничего не найдено')
 })
 
-app.post('/new-message', async (req, res) => {
+app.post('/', async (req, res) => {
     const { message } = req.body
     const messageText = message?.text?.toLowerCase()?.trim()
     const chatId = message?.chat?.id
