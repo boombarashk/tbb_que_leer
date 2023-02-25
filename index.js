@@ -18,8 +18,12 @@ app.post('/', async (req, res) => {
     const chatId = message?.chat?.id
     try {
         const result = await googleSearch(messageText)
-        console.log(message, result.items[0])
-        const text = result.items[0].volumeInfo.imageLinks.thumbnail
+        const {volumeInfo} = result.items[0]
+        let text = volumeInfo.imageLinks?.thumbnail
+        if (!text) {
+            text = `${volumeInfo.authors.join(', ')} ${volumeInfo.title}`
+        }
+        await reply(text, chatId)
         res.end()
     } catch(e) {
         console.log(e)
