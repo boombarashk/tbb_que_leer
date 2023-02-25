@@ -18,7 +18,7 @@ app.post('/', async (req, res) => {
     const chatId = message?.chat?.id
 
     const result = await googleSearch(messageText)
-    const text = result ? result.items[0]?.volumeInfo.imageLinks.thumbnail : 'Ничего не найдено'
+    const text = result ? result.items[0]?.volumeInfo.imageLinks?.thumbnail : 'Ничего не найдено'
     await reply(text, chatId)
     res.end()
 })
