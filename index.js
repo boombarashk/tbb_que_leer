@@ -14,12 +14,16 @@ app.get('/', async (req, res) => {
 
 app.post('/', async (req, res) => {
     const { message } = req.body
-    const messageText = message?.text?.toLowerCase()?.trim()
-    const chatId = message?.chat?.id
-
-    const result = await googleSearch(messageText)
-    const text = result ? result.items[0]?.volumeInfo.imageLinks?.thumbnail : 'Ничего не найдено'
-    await reply(text, chatId)
+    try {
+        const messageText = message?.text?.toLowerCase()?.trim()
+        const chatId = message?.chat?.id
+        const result = await googleSearch(messageText)
+        console.log(message, result)
+        const text = result.items[0].volumeInfo.imageLinks.thumbnail
+    } catch(e) {
+        console.log(e)
+        await reply('Ничего не найдено', chatId)
+    }
     res.end()
 })
 
