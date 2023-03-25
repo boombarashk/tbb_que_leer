@@ -1,9 +1,7 @@
 const axios = require('axios');
-const {google} = require('googleapis');
+const { GoogleSpreadsheet } = require('google-spreadsheet')
 
-const {telegramToken, spreadsheetId} = require('./config.js')
-
-const sheets = google.sheets('v4');
+const {telegramToken, spreadsheetId, client_email, private_key} = require('./config.js')
 
 const googleSearch = async (searchString) => {
     const searchUrl = 'https://www.googleapis.com/books/v1/volumes'
@@ -14,28 +12,31 @@ const googleSearch = async (searchString) => {
     return data
 }
 
-const booksListSearch = async () => {
-    //fixme const authClient = await authorize();
-    const request = {
-        spreadsheetId,
+const sheetGetRandomBook = async (messageText) => {
+    const doc = new GoogleSpreadsheet(spreadsheetId)
+    await doc.useServiceAccountAuth({
+        client_email,
+        private_key: private_key.replace(/\\n/g, '\n')
+    })
 
-        // The ranges to retrieve from the spreadsheet.
-        ranges: ['A4:A154'],
+    await doc.loadInfo()
+    const sheet = doc.sheetsByIndex[0]
+    await sheet.loadCells(`A1:C${sheet.rowCount}`)
 
-        // True if grid data should be returned.
-        // This parameter is ignored if a field mask was set in the request.
-        includeGridData: false,  // TODO: Update placeholder value.
+    const offsetIndex = 4
+    // const FORMULA = `=CONCATENATE("Всего: "; COUNTIF($A$4:$A$150; true); "/"; COUNTA($C$4:$C$150))`
+    const valueDataLines = sheet.getCell(0, 2).value
+    const countDataLines = +valueDataLines.slice(valueDataLines.indexOf('/') + 1) || sheet.rowCount
 
-        //auth: authClient,
-    };
-
-    try {
-        const response = (await sheets.spreadsheets.get(request)).data;
-        // TODO: Change code below to process the `response` object:
-        console.log(JSON.stringify(response, null, 2));
-    } catch (err) {
-        console.error(err);
+    const booksNoRead = []
+    for (let rowIndex=offsetIndex; rowIndex< countDataLines + offsetIndex; rowIndex++) {
+        if(!sheet.getCellByA1(`A${rowIndex}`).value) {
+            //fixme find messageText
+            booksNoRead.push(sheet.getCellByA1(`C${rowIndex}`).value)
+        }
     }
+    const randomIndex = Math.floor(Math.random() * booksNoRead.length)
+    return booksNoRead[randomIndex]
 }
 
 const reply = async( text, chatId, reply_to_message_id) => {
@@ -44,4 +45,4 @@ const reply = async( text, chatId, reply_to_message_id) => {
         .catch(e => console.log(e))
 }
 
-module.exports = { googleSearch, booksListSearch, reply }
+module.exports = { googleSearch, sheetGetRandomBook, reply }

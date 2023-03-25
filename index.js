@@ -1,6 +1,6 @@
 const express = require('express')
 
-const {googleSearch, reply}  = require('./requests.js')
+const {googleSearch, reply, sheetGetRandomBook}  = require('./requests.js')
 const {port} = require('./config.js')
 
 const app = express()
@@ -17,13 +17,8 @@ app.post('/', async (req, res) => {
     const messageText = message?.text?.toLowerCase()?.trim()
     const chatId = message?.chat?.id
     try {
-        const result = await googleSearch(messageText)
-        const {volumeInfo} = result.items[0]
-        let text = volumeInfo.imageLinks?.thumbnail
-        if (!text) {
-            text = `${volumeInfo.authors.join(', ')} ${volumeInfo.title}`
-        }
-        await reply(text, chatId)
+        const result = await sheetGetRandomBook(messageText)
+        await reply(result, chatId)
         res.end()
     } catch(e) {
         console.log(e)
@@ -33,7 +28,7 @@ app.post('/', async (req, res) => {
 })
 
 try {
-    app.listen(port, () => {
+    app.listen(port, async() => {
         console.log(`Server is running on port ${port}`)
     })
 } catch(e) {
