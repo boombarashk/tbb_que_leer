@@ -16,7 +16,7 @@ const sheetGetRandomBook = async (messageText) => {
     const doc = new GoogleSpreadsheet(spreadsheetId)
     await doc.useServiceAccountAuth({
         client_email,
-        private_key: private_key.replace(/\\n/g, '\n')
+        private_key: private_key?.replace(/\\n/g, '\n')
     })
 
     await doc.loadInfo()
